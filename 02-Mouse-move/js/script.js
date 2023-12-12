@@ -16,22 +16,21 @@ $(function () {
   let my = 0;
   let speed = 0.008;
 
+  // 반복되는 동작(moving)을 변수에 저장 (취소시키려고)
+  let movingObj;
+
   // 함수를 3개 만들기
   // 1. 마우스 좌표값 받아오기
+  function getOffset() {
+    $window.on('mousemove', function (e) {
+      // 마우스 좌표의 시작지점을 화면의 정중아으로 이동
+      // 마우스가 중앙에 있을 걸 고려하여 그만큼 빨강원의 거리를 더 띄워주기
+      x = e.pageX - $window.outerWidth() / 2;
+      y = e.pageY - $window.outerHeight() / 2;
+    });
+  }
+
   // 2. 오브젝트를 움직이게 하는 함수
-  // 3. 1번과 2번을 실행시키는 함수
-
-  // 마우스가 움직일 때 좌표값 받아오기
-  $window.on('mousemove', function (e) {
-    // 마우스 좌표의 시작지점을 화면의 정중아으로 이동
-    // 마우스가 중앙에 있을 걸 고려하여 그만큼 빨강원의 거리를 더 띄워주기
-    x = e.pageX - $window.outerWidth() / 2;
-    y = e.pageY - $window.outerHeight() / 2;
-  });
-
-  let movingObj;
-  moving();
-
   // 마우스의 기본 좌표값을 기준으로 어떤 값을 만들어 내자
   function moving() {
     // A += B ---> A = A + B
@@ -57,9 +56,31 @@ $(function () {
     movingObj = requestAnimationFrame(moving); /* 재귀함수 */
   }
 
-  $objWrap.on('click', function () {
-    cancelAnimationFrame(movingObj);
-    // setTimeout(동작, 시간)
-    setTimeout(moving, 2000);
+  // 3. 1번과 2번을 실행시키는 함수
+  // function initMoving() {} //이름있는 함수(유명함수)
+  // 이름없는 함수(무명함수)
+  const initMoving = function () {
+    getOffset();
+    moving();
+  };
+
+  initMoving();
+
+  // 스크롤값이 콘텐츠 영역을 넘어가면
+
+  $window.on('scroll', function () {
+    let serollTop = $(this).scrollTop();
+    let targetPos = $('.scroll-area').offset().top;
+
+    console.log(serollTop, targetPos);
+
+    // 만약 스크롤값이 targetPos를 넘어가면
+    if (serollTop >= targetPos) {
+      // 애니메이션을 멈추고
+      cancelAnimationFrame(movingObj);
+    } else {
+      // 그렇지 않으면 다시 애니메이션 실행
+      initMoving();
+    }
   });
 });
