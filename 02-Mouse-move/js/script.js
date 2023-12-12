@@ -16,6 +16,7 @@ $(function () {
   // 마우스가 움직일 때 좌표값 받아오기
   $window.on('mousemove', function (e) {
     // 마우스 좌표의 시작지점을 화면의 정중아으로 이동
+    // 마우스가 중앙에 있을 걸 고려하여 그만큼 빨강원의 거리를 더 띄워주기
     x = e.pageX - $window.outerWidth() / 2;
     y = e.pageY - $window.outerHeight() / 2;
     // x = 0일 때,
@@ -36,8 +37,7 @@ $(function () {
 
     // 마우스 좌표값 적용
     $cursor.css({
-      left: mx,
-      top: my,
+      transform: `translate(${mx},${my})`,
     });
 
     // 부드럽게 반복
